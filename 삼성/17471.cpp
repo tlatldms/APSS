@@ -72,7 +72,7 @@ void fun(int x) {
 
 			m = min(m, abs(sum_f - sum_s));
 
-			//cout << "\n ÀÎ±¸ Â÷ÀÌ: " <<abs(sum_f - sum_s) <<"\n\n\n";
+			//cout << "\n ï¿½Î±ï¿½ ï¿½ï¿½ï¿½ï¿½: " <<abs(sum_f - sum_s) <<"\n\n\n";
 		}
 
 	} while (next_permutation(tmp.begin(), tmp.end()));
