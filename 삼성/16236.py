@@ -1,53 +1,51 @@
-from queue import PriorityQueue
-dxy = [[-1,0], [0,-1], [0,1], [1,0]]
+from collections import deque
 
-def bfs(now_size):
-    global board, sx, sy
-    q = PriorityQueue()
-    q.put((0, sx, sy))
-    visit = [[0]*21 for _ in range(21)]
-    visit[sx][sy] = 1
-    board[sx][sy] = 0
-    while not q.empty():
-        cnt, x, y = q.get()
-        if board[x][y] < now_size and board[x][y] != 0: #catch
-            board[x][y] = 9
-            sx , sy = x, y
-            #print(x, y, cnt)
-            return cnt
-        for i in range(4):
-            nx = x + dxy[i][0]
-            ny = y + dxy[i][1]
-            if nx < 0 or nx >= N or ny < 0 or ny >= N: continue
-            if visit[nx][ny] or (board[nx][ny] > now_size): continue
-            visit[nx][ny] = 1
-            q.put((cnt+1, nx, ny))
-    return -1 #못잡았을 때
+dxy = [[-1,0], [0,1], [1, 0], [0, -1]]
 
+N, K = int(input()), int(input())
+board = [[0]*(N+1) for _ in range(N+1)]
+for _ in range(K):
+    a,b = list(map(int, input().split()))
+    board[a][b] = 'a'
+L = int(input())
+dirs = deque()
+nd = 1 #오른쪽
+for _ in range(L):
+    a, b = input().split()
+    dirs.append((int(a), b))
 
-N = int(input())
-board = [[] for _ in range(N)]
-for i in range(N):
-    board[i] = list(map(int, input().split()))
+cnt = 0
+x, y = 1, 1
+snake = deque()
+next_turn = dirs[0][0]
+snake.append((1,1))
+while True:
+    cnt+=1
+    x = x + dxy[nd][0]
+    y = y + dxy[nd][1]
+    #print(x,y, len(snake))
+    if x < 1 or x > N or y < 1 or y > N: #벽에 닿았음
+        answer = cnt
+        break
+    if board[x][y] == 's':  # 자기 몸에 닿았음
+        answer = cnt
+        break
 
-fish = [[] for _ in range(7)]
-sx, sy = -1, -1
-for i in range(N):
-    for j in range(N):
-        t = board[i][j]
-        if t == 9:
-            sx, sy = i, j
-nsize=1
-ret = 0
-flag = True
-while flag:
-    nsize += 1
-    for _ in range(nsize):
-        r = bfs(nsize)
-        if r == -1: #못잡았음
-            flag = False
-            break
-        else: #잡았음
-            #print("got next fish in:", r)
-            ret += r
-print(ret)
+    snake.appendleft((x,y))
+
+    if board[x][y] == 'a': #사과 먹을 때
+        pass
+    else: # 사과 안먹으면 꼬리 자르기
+        tx, ty = snake.pop()
+        board[tx][ty] = 0
+    board[x][y] = 's'
+
+    if next_turn == cnt: # 회전 해야하면
+        i, d = dirs.popleft()
+        if d == 'D':
+            nd = (nd + 1) % 4
+        elif d == 'L':
+            nd = (nd + 3) % 4
+        if dirs:
+            next_turn = dirs[0][0]
+print(answer)
