@@ -1,0 +1,38 @@
+from collections import deque
+
+visited = [[9999999999] * 26 for i in range(26)]
+dxy = [[-1,0], [0,1], [1,0], [0,-1]]
+def solution(board):
+    answer = 0
+    global N, m
+    N = len(board)
+    m=9999999999
+    bfs(board)
+    return m-500
+
+def bfs(board):
+    global m
+    dq = deque()
+    dq.append([0, 0, -1, 0])
+    visited[0][0] = -1
+    while dq:
+        x, y, d, price = dq.popleft()     
+        if x == N-1 and y == N-1: # 도착
+            m = min(m, price)
+
+        for i in range(4):
+            nx = x + dxy[i][0]
+            ny = y + dxy[i][1]
+            np = price
+
+            if nx < 0 or nx >= N or ny < 0 or ny >= N: continue
+            if board[nx][ny] == 1: continue
+            # print(nx,ny)
+            if i == d: # 같은 방향일때
+                np = price + 100 
+            else: # 다른 방향일때
+                np = price + 600
+            if visited[nx][ny] >= np: # 더 싸면
+                visited[nx][ny] = np
+                # print("nx, ny, nprice ", nx, ny, np)
+                dq.append([nx, ny, i, np])

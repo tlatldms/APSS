@@ -1,0 +1,23 @@
+def solution(sticker):
+    N = len(sticker)
+    if N <= 3:
+        m = 0
+        for x in sticker:
+            if x > m :
+                m = x
+        return m
+    dp = [0] * len(sticker)      
+    dp2 = [0] * len(sticker)
+    dp[0] = sticker[0]
+    dp[1] = sticker[1]
+    dp[2] = sticker[0] + sticker[2]
+    for i in range(3, len(sticker)-1):
+        dp[i] = max(dp[i-3]+sticker[i], dp[i-2] + sticker[i])
+    dp2[0] = 0
+    dp2[1] = sticker[1]
+    dp2[2] = max(sticker[1], sticker[2])
+    for i in range(3, len(sticker)):
+        dp2[i] = max(dp2[i-3] + sticker[i], dp2[i-2] + sticker[i])
+    val1 = max(dp)
+    val2 = max(dp2)
+    return max(val1, val2)

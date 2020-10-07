@@ -1,0 +1,46 @@
+from collections import deque
+
+def solution(n, path, order):
+    conn = {}
+    front_back= {}
+    back_front={}
+
+    #추가하기
+    for p in path:
+        if p[0] in conn:
+            conn[p[0]].append(p[1])
+        else:
+            conn[p[0]] = [p[1]]
+        if p[1] in conn:
+            conn[p[1]].append(p[0])
+        else:
+            conn[p[1]] = [p[0]]
+    for o in order:
+        front_back[o[0]] = o[1]
+        back_front[o[1]] = o[0]
+    if 0 in back_front:
+        return False
+    visit = [0]*200000
+    blocked = [0]*200000
+    
+    dq = deque()
+    dq.append(0)
+    cnt = 0
+    visit[0] = 1
+    while dq:
+        now = dq.popleft()
+        cnt += 1
+        if now in front_back and blocked[front_back[now]] == 1 : #나때문에 블록되어 있었다면 풀어주기
+            visit[front_back[now]] = 1
+            dq.append(front_back[now])
+        for nx in conn[now]:
+            if visit[nx]: continue
+            if nx in back_front and visit[back_front[nx]] == 0: # 먼저 가야할방을 안갔음
+                blocked[nx] = 1 # 블록해버림
+                continue
+            visit[nx] = 1
+            dq.append(nx)
+
+    if cnt == n :
+        return True
+    return False

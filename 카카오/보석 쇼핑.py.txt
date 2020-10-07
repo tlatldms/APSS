@@ -1,0 +1,25 @@
+def solution(gems):
+    N = len(set(gems))
+    target=0
+    answer = []
+    s,e = 0, 0
+    gem_set = []
+    num_dic={}
+    m_s, m_e = 0, 100001
+    print(N)
+    
+    for i, g in enumerate(gems):
+        if g not in num_dic:
+            target += 1
+        num_dic[g] = i
+        if target < N : # 아직 다 안나왔으면
+            continue
+            
+        # 다 나온 뒤
+        while s < num_dic[gems[s]]: # 첫번째를 최대한 줄임
+            s += 1
+        # 더 작으면 업데이트
+        if (m_e - m_s) > (i-s):
+            m_e, m_s = i, s
+    answer=[m_s+1, m_e+1]
+    return answer

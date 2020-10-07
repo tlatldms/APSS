@@ -1,0 +1,27 @@
+from queue import PriorityQueue
+
+def solution(N, road, K):
+    answer = 0
+    g = [set() for _ in range(51)] 
+    visit = [[False]*51 for _ in range(51)] 
+    w = [[10001]*51 for _ in range(51)]
+    weight = [99999999999999]*51
+    for r in road:
+        s, l = r[0], r[1]
+        g[s].add(l)
+        g[l].add(s)
+        w[s][l] = min(w[s][l], r[2])
+        w[l][s] = min(w[l][s], r[2])
+    pq = PriorityQueue()
+    pq.put((0, 1))
+    while not pq.empty():
+        nw, now = pq.get()
+        for x in g[now]: # 각 노드들
+            if visit[now][x] or visit[x][now]: continue
+            weight[x] = min(nw + w[now][x], weight[x])
+            visit[now][x], visit[x][now] = True, True
+            pq.put((weight[x], x))
+    cnt = 1
+    for i in range(2, N+1):
+        if weight[i] <= K : cnt += 1
+    return cnt

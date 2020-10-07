@@ -1,0 +1,28 @@
+#include <iostream>
+#include <string>
+using namespace std;
+int trans[260];
+int dxy[4][2] = {{-1,0}, {0,1}, {1,0}, {0,-1}};
+
+bool visit[11][11][4];
+int solution(string dirs) {
+	int answer = 0;
+    trans['U']=0; trans['D']=2; trans['R']=1; trans['L']=3;
+    int x=5, y=5;
+    for (int i=0; i<dirs.size(); i++) {
+        //cout << "x: " << x <<",y: " << y <<endl;
+        int d = trans[dirs[i]];
+        int nx= x+dxy[d][0];
+        int ny= y+dxy[d][1];
+        if (nx < 0 || nx > 10 || ny < 0 || ny > 10) continue;
+        
+        if (visit[x][y][d]) {
+            x=nx; y=ny; continue;
+        }
+        visit[x][y][d] = true;
+        visit[nx][ny][(d+2)%4] = true;
+        x=nx; y=ny;
+        answer++;
+    }
+	return answer;
+}

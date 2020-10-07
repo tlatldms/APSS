@@ -1,0 +1,54 @@
+import re
+def solution(word, pages):
+    answer = 0
+    m={}
+   
+    for i, p in enumerate(pages):
+        result = re.split('[^a-zA-Z]', p.lower())
+        result = list(filter(lambda x: x != '', result))
+        basic=0
+        word = word.lower()
+        for r in result:
+            if  word == r:
+                basic+=1
+        #print(result)
+        
+        sp = p.split("\n")
+        url=None
+        for q in sp:
+            pa = q.split("<meta property=\"og:url\" content=\"")
+            if len(pa) != 1:
+                url = pa[1].split("\"")[0]
+                break
+        
+        #url = sp[3].split("<meta property=\"og:url\" content=\"")[1].split("\"")[0]
+        m[url] = {"idx":i, "outs":[]}
+        for i, line in enumerate(sp):
+            a = line.split("<a href=\"")
+            if len(a) != 1:
+                a = a[1:]
+                for aa in a:
+                    outlink = aa.split("\"")[0]
+                    m[url]["outs"].append(outlink)
+        m[url]["basic"] = basic
+    #print(m)
+    for k in m.keys():
+        for o in m[k]["outs"]:
+            if o in m:
+                #print("key {0} got {1} from {2}".format(o, m[k]["basic"]/ len(m[k]["outs"]), k))
+                if "out_score" in m[o]:
+                    m[o]["out_score"] += m[k]["basic"]/ len(m[k]["outs"])
+                else : 
+                    m[o]["out_score"] = m[k]["basic"]/ len(m[k]["outs"])
+    mx=0
+    for k in m:
+        if "out_score" in m[k]:
+            sc = m[k]["basic"] + m[k]["out_score"]
+        else:
+            sc = m[k]["basic"]
+        #print(k, sc)
+        if mx < sc:
+            mx = sc
+            answer = m[k]["idx"]
+        
+    return answer
